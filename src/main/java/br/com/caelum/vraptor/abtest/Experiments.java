@@ -22,7 +22,7 @@ public class Experiments {
 	public void create(String name, Integer numberOfVariations) {
 		String experimentHash = hashCache.getMD5For(name);
 
-		Integer variationNumber = null;
+		Integer variationNumber;
 		String variationHash = null;
 
 		// is there a forced variation number?
@@ -30,9 +30,9 @@ public class Experiments {
 				.getParameter("br.com.caelum.abtest.force_variation");
 
 		if (forcedVariationParam == null) {
-			variationHash = lookupCookie(experimentHash, variationHash);
+			variationHash = lookupCookie(experimentHash);
 			variationNumber = randomIfNoneFound(numberOfVariations,
-					variationNumber, variationHash);
+					variationHash);
 		} else {
 			variationNumber = Integer.parseInt(forcedVariationParam);
 		}
@@ -45,14 +45,15 @@ public class Experiments {
 	}
 
 	private Integer randomIfNoneFound(Integer numberOfVariations,
-			Integer variationNumber, String variationHash) {
+			String variationHash) {
 		if (variationHash == null) {
-			variationNumber = new Random().nextInt(numberOfVariations) + 1;
+			int number = new Random().nextInt(numberOfVariations) + 1;
+			return number;
 		}
-		return variationNumber;
+		return null;
 	}
 
-	private String lookupCookie(String experimentHash, String variationHash) {
+	private String lookupCookie(String experimentHash) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
@@ -61,7 +62,7 @@ public class Experiments {
 				}
 			}
 		}
-		return variationHash;
+		return null;
 	}
 
 	public Experiment getExperimentByHash(String hash) {
