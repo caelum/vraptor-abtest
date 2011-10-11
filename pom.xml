@@ -3,11 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>br.com.caelum.vraptor</groupId>
-	<artifactId>abtest</artifactId>
+	<artifactId>vraptor-abtest</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
-	<name>vraptor-cached</name>
+	<name>vraptor-abtest</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
