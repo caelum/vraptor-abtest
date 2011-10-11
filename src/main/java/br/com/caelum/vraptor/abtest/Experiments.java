@@ -6,6 +6,7 @@ import java.util.Random;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class Experiments {
 
@@ -14,9 +15,11 @@ public class Experiments {
 
 	private final HttpServletRequest request;
 	private Experiment lastExperiment;
+	private final HttpServletResponse response;
 
-	public Experiments(HttpServletRequest request) {
+	public Experiments(HttpServletRequest request, HttpServletResponse response) {
 		this.request = request;
+		this.response = response;
 	}
 
 	public void create(String name, Integer numberOfVariations) {
@@ -46,7 +49,6 @@ public class Experiments {
 
 	private Integer randomIfNoneFound(Integer numberOfVariations,
 			Integer variationNumber, String variationHash) {
-		// generated a random variation number
 		if (variationHash == null) {
 			variationNumber = new Random().nextInt(numberOfVariations) + 1;
 		}
@@ -58,8 +60,7 @@ public class Experiments {
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals("_ab_" + experimentHash)) {
-					variationHash = cookie.getValue();
-					break;
+					return cookie.getValue();
 				}
 			}
 		}
