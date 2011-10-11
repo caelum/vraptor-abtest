@@ -10,17 +10,17 @@ public class WebExperiment {
 	public static final String EXPERIMENTS = "br.com.caelum.abtest.Experiments";
 
 	public static void define(String name, int variations,
-			HttpServletRequest request, HttpServletResponse response) {
-		getExperiments(request, response).create(name, variations);
+			HttpServletRequest request) {
+		getExperiments(request).create(name, variations);
 	}
 
-	private static Experiments getExperiments(HttpServletRequest request, HttpServletResponse response) {
+	private static Experiments getExperiments(HttpServletRequest request) {
 
 		Experiments experiments = (Experiments) request
 				.getAttribute(EXPERIMENTS);
 
 		if (experiments == null) {
-			experiments = new Experiments(request, response);
+			experiments = new Experiments(request);
 			request.setAttribute(EXPERIMENTS, experiments);
 		}
 

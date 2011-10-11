@@ -6,7 +6,6 @@ import java.util.Random;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public class Experiments {
 
@@ -15,11 +14,9 @@ public class Experiments {
 
 	private final HttpServletRequest request;
 	private Experiment lastExperiment;
-	private final HttpServletResponse response;
 
-	public Experiments(HttpServletRequest request, HttpServletResponse response) {
+	public Experiments(HttpServletRequest request) {
 		this.request = request;
-		this.response = response;
 	}
 
 	public void create(String name, Integer numberOfVariations) {
