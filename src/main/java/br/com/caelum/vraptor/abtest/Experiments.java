@@ -27,7 +27,7 @@ public class Experiments {
 
 		// is there a forced variation number?
 		String forcedVariationParam = request
-				.getParameter("br.com.caelum.vraptor.abtest.force_variation");
+				.getParameter("br.com.caelum.abtest.force_variation");
 
 		if (forcedVariationParam == null) {
 			variationHash = lookupCookie(experimentHash, variationHash);
