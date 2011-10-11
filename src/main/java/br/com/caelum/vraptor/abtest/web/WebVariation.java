@@ -17,9 +17,12 @@ public class WebVariation {
 
 		Experiment experiment = experimentsFor(request).getLastExperiment();
 		experiment.newVariation();
-		response.addCookie(new Cookie("_ab_" + hash.getMD5For(experiment.getName()), hash.getMD5For(name)));
 
-		return experiment.shouldViewThisVariation(name);
+		boolean should = experiment.shouldViewThisVariation(name);
+		if(should) {
+			response.addCookie(new Cookie("_ab_" + hash.getMD5For(experiment.getName()), hash.getMD5For(name)));
+		}
+		return should;
 	}
 
 	private static Experiments experimentsFor(HttpServletRequest request) {
