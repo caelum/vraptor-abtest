@@ -26,9 +26,13 @@ public class ChosenExperiment {
 	public void newVariation() {
 		variationIterator++;
 	}
+	
+	private String currentVariation() {
+		return hashCache.getMD5For(experiment.getName() + variationIterator);
+	}
 
 	public boolean shouldViewThisVariation(String variationName) {
-		String thisVariationHash = hashCache.getMD5For(experiment.getName() + choosenVariationNumber);
+		String thisVariationHash = currentVariation(); 
 		return thisVariationHash.equals(choosenVariationHash) || 
 			(choosenVariationNumber != null && variationIterator == choosenVariationNumber);
 	}

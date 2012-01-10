@@ -35,7 +35,7 @@ public class Experiment {
 			return new ChosenExperiment(this, null,  Integer.parseInt(forcedVariation));
 		}
 		
-		String variation = lookupCookie(getKey(), request);
+		String variation = lookupCookie(request);
 		return randomIfNoneFound(numberOfVariations, variation);
 	}
 	
@@ -51,16 +51,19 @@ public class Experiment {
 		return new ChosenExperiment(this, variation, null);
 	}
 
-	private String lookupCookie(String experimentHash, HttpServletRequest request) {
+	private String lookupCookie(HttpServletRequest request) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("_ab_" + experimentHash)) {
+				if (matches(cookie)) {
 					return cookie.getValue();
 				}
 			}
 		}
 		return null;
+	}
+	private boolean matches(Cookie cookie) {
+		return cookie.getName().equals("_ab_" + getKey());
 	}
 	
 }
