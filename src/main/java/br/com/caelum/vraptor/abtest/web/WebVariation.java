@@ -30,16 +30,16 @@ public class WebVariation {
 		return experiments;
 	}
 
-	public static String analyticsCodeFor(String experiment, Integer number, String variation) {
+	public static String analyticsCodeFor(String experiment, String variation) {
 		return "<script type=\"text/javascript\">\n"
-				+ javascriptAnalyticsCodeFor(experiment, number, variation)
+				+ javascriptAnalyticsCodeFor(experiment, variation)
 				+ "</script>\n";
 	}
 
-	public static String javascriptAnalyticsCodeFor(String experiment, Integer number, String variation) {
+	public static String javascriptAnalyticsCodeFor(String experiment, String variation) {
 		return "var _abtest=['"
 				+ hash.getMD5For(experiment) + "','" + experiment + "','"
-				+ hash.getMD5For(experiment + number) + "','" + variation + "'];\n"
+				+ variation + "','" + variation + "'];\n"
 				+ "_gaq.push(['_trackEvent', 'A/B', _abtest[1], _abtest[3]]);\n";
 	}
 
