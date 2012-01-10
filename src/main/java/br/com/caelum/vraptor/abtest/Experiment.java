@@ -1,37 +1,66 @@
 package br.com.caelum.vraptor.abtest;
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import java.util.Random;
+import br.com.caelum.vraptor.abtest.Experiment;
+import br.com.caelum.vraptor.abtest.Experiments;
+import br.com.caelum.vraptor.abtest.HashCache;
 
 public class Experiment {
 
-	private final HashCache hashCache = new HashCache();
-	
+	/** Singleton cache. Nobody loves it. */
+	private final static HashCache hash = new HashCache();
+
 	private final String name;
 	private final Integer numberOfVariations;
-	
-	private final Integer choosenVariationNumber;
-	private final String choosenVariationHash;
-	
-	public int variationIterator = 0;
 
-	public Experiment(String name, Integer numberOfVariations, String variationHash, Integer variationNumber) {
+	public Experiment(String name, Integer numberOfVariations) {
 		this.name = name;
 		this.numberOfVariations = numberOfVariations;
-		this.choosenVariationHash = variationHash;
-		this.choosenVariationNumber = variationNumber;
-	}
-	
-	public void newVariation() {
-		variationIterator++;
-		if (variationIterator > numberOfVariations)
-			throw new IllegalStateException("There are more variations than the number alowed in experiment declaration");
-	}
-
-	public boolean shouldViewThisVariation(String variationName) {
-		String thisVariationHash = hashCache.getMD5For(variationName);
-		return thisVariationHash.equals(choosenVariationHash) || 
-			(choosenVariationNumber != null && variationIterator == choosenVariationNumber);
 	}
 	
 	public String getName() {
 		return name;
 	}
+	
+	public ChosenExperiment choose(HttpServletRequest request) {
+		String forcedVariation = request
+				.getParameter("br.com.caelum.abtest.force_variation");
+
+		if (forcedVariation != null) {
+			return new ChosenExperiment(this, null,  Integer.parseInt(forcedVariation));
+		}
+		
+		String variation = lookupCookie(getKey(), request);
+		return randomIfNoneFound(numberOfVariations, variation);
+	}
+	
+	public String getKey() {
+		return hash.getMD5For(name);
+	}
+
+	private ChosenExperiment randomIfNoneFound(Integer numberOfVariations, String variation) {
+		if (variation == null) {
+			int number = new Random().nextInt(numberOfVariations) + 1;
+			return new ChosenExperiment(this, null, number);
+		}
+		return new ChosenExperiment(this, variation, null);
+	}
+
+	private String lookupCookie(String experimentHash, HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("_ab_" + experimentHash)) {
+					return cookie.getValue();
+				}
+			}
+		}
+		return null;
+	}
+	
 }

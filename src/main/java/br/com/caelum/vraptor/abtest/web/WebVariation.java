@@ -1,6 +1,6 @@
 package br.com.caelum.vraptor.abtest.web;
 
-import javax.servlet.http.Cookie;
+import br.com.caelum.vraptor.abtest.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,17 +15,10 @@ public class WebVariation {
 
 	public static boolean shouldView(String name, HttpServletRequest request, HttpServletResponse response) {
 
-		Experiment experiment = experimentsFor(request).getLastExperiment();
+		ChosenExperiment experiment = experimentsFor(request).getLastExperiment();
 		experiment.newVariation();
 
-		boolean should = experiment.shouldViewThisVariation(name);
-		if(should) {
-			Cookie token = new Cookie("_ab_" + hash.getMD5For(experiment.getName()), hash.getMD5For(name));
-		    token.setMaxAge(12 * 30 * 24 * 60 * 60);
-		    token.setPath("/");
-			response.addCookie(token);
-		}
-		return should;
+		return experiment.shouldViewThisVariation(name);
 	}
 
 	private static Experiments experimentsFor(HttpServletRequest request) {
@@ -37,16 +30,16 @@ public class WebVariation {
 		return experiments;
 	}
 
-	public static String codeFor(String experiment, String variation) {
+	public static String analyticsCodeFor(String experiment, Integer number, String variation) {
 		return "<script type=\"text/javascript\">\n"
-				+ javascriptCodeFor(experiment, variation)
+				+ javascriptAnalyticsCodeFor(experiment, number, variation)
 				+ "</script>\n";
 	}
 
-	public static String javascriptCodeFor(String experiment, String variation) {
+	public static String javascriptAnalyticsCodeFor(String experiment, Integer number, String variation) {
 		return "var _abtest=['"
 				+ hash.getMD5For(experiment) + "','" + experiment + "','"
-				+ hash.getMD5For(variation) + "','" + variation + "'];\n"
+				+ hash.getMD5For(experiment + number) + "','" + variation + "'];\n"
 				+ "_gaq.push(['_trackEvent', 'A/B', _abtest[1], _abtest[3]]);\n";
 	}
 

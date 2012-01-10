@@ -1,5 +1,6 @@
 package br.com.caelum.vraptor.abtest.web;
 
+import br.com.caelum.vraptor.abtest.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -9,9 +10,9 @@ public class WebExperiment {
 
 	public static final String EXPERIMENTS = "br.com.caelum.abtest.Experiments";
 
-	public static void define(String name, int variations,
+	public static ChosenExperiment define(String name, int variations,
 			HttpServletRequest request) {
-		getExperiments(request).create(name, variations);
+		return getExperiments(request).create(name, variations);
 	}
 
 	private static Experiments getExperiments(HttpServletRequest request) {
