@@ -39,4 +39,5 @@ public class ChosenExperiment {
 	public String getValueHash() {
 		return choosenVariationHash!=null ? choosenVariationHash : hashCache.getMD5For(experiment.getName() + choosenVariationNumber);
 	}
+
 }

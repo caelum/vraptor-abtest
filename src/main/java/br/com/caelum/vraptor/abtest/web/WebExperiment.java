@@ -10,9 +10,9 @@ public class WebExperiment {
 
 	public static final String EXPERIMENTS = "br.com.caelum.abtest.Experiments";
 
-	public static ChosenExperiment define(String name, int variations,
+	public static void define(String name, int variations,
 			HttpServletRequest request) {
-		return getExperiments(request).create(name, variations);
+		getExperiments(request).create(name, variations);
 	}
 
 	private static Experiments getExperiments(HttpServletRequest request) {

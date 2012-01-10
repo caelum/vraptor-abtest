@@ -13,14 +13,15 @@ public class WebVariation {
 	/** Singleton cache. Nobody loves it. */
 	private final static HashCache hash = new HashCache();
 
-	public static boolean shouldView(String name, HttpServletRequest request, HttpServletResponse response) {
+	public static ChosenExperiment shouldView(String name, HttpServletRequest request) {
 
 		ChosenExperiment experiment = experimentsFor(request).getLastExperiment();
 		experiment.newVariation();
 
-		return experiment.shouldViewThisVariation(name);
+		return experiment.shouldViewThisVariation(name) ?
+					experiment : null;
 	}
-
+	
 	private static Experiments experimentsFor(HttpServletRequest request) {
 		Experiments experiments = (Experiments) request
 				.getAttribute(WebExperiment.EXPERIMENTS);

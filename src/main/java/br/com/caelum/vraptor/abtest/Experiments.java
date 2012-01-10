@@ -18,7 +18,7 @@ public class Experiments {
 		this.request = request;
 	}
 
-	public ChosenExperiment create(String name, Integer numberOfVariations) {
+	public void create(String name, Integer numberOfVariations) {
 		String experimentHash = hashCache.getMD5For(name);
 		
 		Experiment ex = new Experiment(name, numberOfVariations);
@@ -26,7 +26,6 @@ public class Experiments {
 		experiments.put(ex.getKey(), choice);
 
 		lastExperiment = choice;
-		return choice;
 	}
 
 	public ChosenExperiment getExperimentByHash(String hash) {
