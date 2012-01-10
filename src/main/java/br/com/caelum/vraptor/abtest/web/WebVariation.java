@@ -20,7 +20,10 @@ public class WebVariation {
 
 		boolean should = experiment.shouldViewThisVariation(name);
 		if(should) {
-			response.addCookie(new Cookie("_ab_" + hash.getMD5For(experiment.getName()), hash.getMD5For(name)));
+			Cookie token = new Cookie("_ab_" + hash.getMD5For(experiment.getName()), hash.getMD5For(name));
+		    token.setMaxAge(12 * 30 * 24 * 60 * 60);
+		    token.setPath("/");
+			response.addCookie(token);
 		}
 		return should;
 	}
@@ -35,11 +38,16 @@ public class WebVariation {
 	}
 
 	public static String codeFor(String experiment, String variation) {
-		return "<script type=\"text/javascript\">\n" + "var _abtest=['"
+		return "<script type=\"text/javascript\">\n"
+				+ javascriptCodeFor(experiment, variation)
+				+ "</script>\n";
+	}
+
+	public static String javascriptCodeFor(String experiment, String variation) {
+		return "var _abtest=['"
 				+ hash.getMD5For(experiment) + "','" + experiment + "','"
 				+ hash.getMD5For(variation) + "','" + variation + "'];\n"
-				+ "_gaq.push(['_trackEvent', 'A/B', _abtest[1], _abtest[3]]);\n"
-				+ "</script>\n";
+				+ "_gaq.push(['_trackEvent', 'A/B', _abtest[1], _abtest[3]]);\n";
 	}
 
 }
